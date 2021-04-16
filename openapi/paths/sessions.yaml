@@ -15,6 +15,10 @@ get:
               nonce:
                 type: string
                 example: 807fbee1a70ef2cdc147aff1bd4793be
+  x-code-samples:
+    - lang: Node
+      source:
+        $ref: ../code_samples/Node/nonce.js
 post:
   tags:
     - Sessions

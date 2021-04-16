@@ -1,0 +1,390 @@
+openapi: 3.0.2
+info:
+  version: 1.0.0
+  title: MysteryDrop.app
+  termsOfService: 'https://example.com/terms/'
+  contact:
+    email: contact@example.com
+    url: 'http://example.com/contact'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  x-logo:
+    url: 'https://redocly.github.io/openapi-template/logo.png'
+  description: >
+    This documentation describes how the web client should interact with the
+    Mystery Drop serverless back end.
+
+    # Introduction
+
+    The Mystery Drop API is available in the dev environment.
+tags:
+  - name: Hello Auth
+    description: Example authenticated endpoint intended for testing session JWTs
+  - name: Sessions
+    description: Authentication endpoints
+  - name: Initiate Upload
+    description: Upload metadata for drop content
+  - name: Get Drops
+    description: Get all drops for a user
+  - name: Mint
+    description: Mint NFTs for drop content
+servers:
+  - url: 'https://dev.ext-api.mysterydrop.app/app/v1'
+  - url: 'https://prod.ext-api.mysterydrop.app/app/v1'
+paths:
+  /sessions:
+    get:
+      tags:
+        - Sessions
+      summary: Get challenge
+      description: Receive a nonce to sign in order to authenticate
+      operationId: nonce
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nonce:
+                    type: string
+                    example: 807fbee1a70ef2cdc147aff1bd4793be
+      x-code-samples:
+        - lang: Node
+          source: >
+            import { Web3Provider } from "@ethersproject/providers";
+
+            import { utils } from "ethers";
+
+
+            import { apiRequest } from "./util";
+
+
+            export const login = async ({ provider }) => {
+              console.log({ provider });
+              const signer = provider.getSigner();
+              const address = await signer.getAddress();
+              console.log({ address });
+
+              const nonceResult = await apiRequest({path: `v1/sessions?PublicAddress=${address}`, method: "GET"});
+
+              const nonce = nonceResult.nonce;
+              console.log({ nonce });
+
+              // sign nonce
+              const msg = `I am signing my one-time nonce: ${nonce}`
+              const signature = await signer.signMessage(msg);
+
+              const loginResult = await apiRequest({path: `v1/sessions`, method: "POST", data: {
+                publicAddress: address,
+                signature,
+              }});
+
+              return loginResult.token;
+            };
+
+
+            export const logout = async ({setJwtAuthToken}) =>
+            setJwtAuthToken(null)
+    post:
+      tags:
+        - Sessions
+      summary: Post response
+      description: Send signature to receive session JWT
+      operationId: login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: >-
+                      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNBZGRyZXNzIjoiMHg4M0JDMDYwNzk1MzgyNjRDYzE4ODI5YzU1MzQzODdjNjk4MjBBNEU2IiwiaWF0IjoxNjE3ODI0MTkxLCJleHAiOjE2MTc4MjQ0OTF9.AHD31cITCl9IaxnCwjQHCgs7yrZWaKe8IO9VGlZhLng
+        '400':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: bad signature
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                publicAddress:
+                  type: string
+                  example: '0x83BC06079538264Cc18829c5534387c69820A4E6'
+                signature:
+                  type: string
+                  example: >-
+                    0x88b6bc7a26898395d6f5306058b982d925a93ef3e3baf36630c21cfcc507cf941780b40dcbd631dff20243056e03ff119960478e3dde2e265f989e9b562022491b
+        description: Challenge response
+        required: true
+  /helloAuth:
+    get:
+      tags:
+        - Hello Auth
+      summary: Auth test
+      description: Receive a greeting with your public address if you have a valid JWT
+      operationId: helloAuth
+      security:
+        - bearer_auth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloAuth'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+  /initiateUpload:
+    post:
+      tags:
+        - Initiate Upload
+      summary: Upload metadata
+      description: >-
+        Start the process to upload the content by preparing S3 to receive
+        uploads
+      operationId: initiateUpload
+      security:
+        - bearer_auth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dropId:
+                    type: string
+                  user:
+                    type: string
+                  dropPreviewContentId:
+                    type: string
+                  dropPreviewUrl:
+                    type: string
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        contentId:
+                          type: string
+                        url:
+                          type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contentType:
+                  type: string
+                dropTitle:
+                  type: string
+                dropDescription:
+                  type: string
+                numberOfItems:
+                  type: integer
+                content:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      contentId:
+                        type: string
+                      contentType:
+                        type: string
+                      contentTitle:
+                        type: string
+                      contentDescription:
+                        type: string
+        description: Content to upload
+        required: true
+  /getDrops:
+    get:
+      tags:
+        - Get Drops
+      summary: Get all drops for a user
+      description: >-
+        Get an array of drops including content metadata, or a processing flag
+        if the content is not done processing
+      operationId: getDrops
+      security:
+        - bearer_auth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: MINTABLE | PROCESSING
+                    dropId:
+                      type: string
+                    createdAt:
+                      type: string
+                    dropPreviewUrl:
+                      type: string
+                    dropTitle:
+                      type: string
+                    dropDescription:
+                      type: string
+                    numberOfItems:
+                      type: string
+                    contentType:
+                      type: string
+                    content:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          contentId:
+                            type: string
+                          contentTitle:
+                            type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+  /mint:
+    get:
+      tags:
+        - Mint
+      summary: Prepare content for minting
+      description: Calculate IPFS hashes and other NFT metadata needed for minting
+      operationId: prepareForMinting
+      parameters:
+        - name: contentId
+          in: path
+          description: ID of the content to mint
+          required: true
+          schema:
+            type: string
+            example: df824575-c199-475d-a440-a0147bbefe4d
+        - name: dropId
+          in: path
+          description: ID of the drop associated with this content
+          required: true
+          schema:
+            type: string
+            example: 480ff17a-51ec-4a17-b0b0-5fe9cba49554
+      security:
+        - bearer_auth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  tokenData:
+                    type: object
+                    properties:
+                      tokenId:
+                        type: string
+                      tokenUri:
+                        type: string
+                      contractAddress:
+                        type: string
+                      chainId:
+                        type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    post:
+      tags:
+        - Mint
+      summary: Submit NFT for lazy minting
+      description: Submit NFT to Rarible API for lazy minting
+      operationId: lazyMint
+      security:
+        - bearer_auth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  TBD:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contentId:
+                  type: string
+                dropId:
+                  type: string
+                signature:
+                  type: string
+        description: Token information and signature to submit to Lazy Minting API
+        required: true
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: 'Bearer {JWT}'
+  schemas:
+    HelloAuth:
+      type: object
+      properties:
+        message:
+          description: A message from the server
+          type: string
+          example: >-
+            Hello 0x83BC06079538264Cc18829c5534387c69820A4E6 you are
+            authenticated!
+    Unauthorized:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthorized
