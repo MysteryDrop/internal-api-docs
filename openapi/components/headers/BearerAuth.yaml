@@ -1,0 +1,4 @@
+description: Auth JWT
+schema:
+  type: string
+  example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNBZGRyZXNzIjoiMHg4M0JDMDYwNzk1MzgyNjRDYzE4ODI5YzU1MzQzODdjNjk4MjBBNEU2IiwiaWF0IjoxNjE3ODI0MTkxLCJleHAiOjE2MTc4MjQ0OTF9.AHD31cITCl9IaxnCwjQHCgs7yrZWaKe8IO9VGlZhLng

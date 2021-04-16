@@ -1,0 +1,25 @@
+get:
+  tags:
+    - Hello Auth
+  summary: Auth test
+  description: Receive a greeting with your public address if you have a valid JWT
+  operationId: helloAuth
+  security:
+    - bearer_auth: []
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/HelloAuth.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized

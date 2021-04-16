@@ -1,0 +1,6 @@
+type: object
+properties:
+  message:
+    description: A message from the server
+    type: string
+    example: Hello 0x83BC06079538264Cc18829c5534387c69820A4E6 you are authenticated!
