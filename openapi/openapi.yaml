@@ -23,6 +23,12 @@ tags:
     description: Example authenticated endpoint intended for testing session JWTs
   - name: Sessions
     description: Authentication endpoints
+  - name: Initiate Upload
+    description: Upload metadata for drop content
+  - name: Get Drops
+    description: Get all drops for a user
+  - name: Mint
+    description: Mint NFTs for drop content
 servers:
   - url: 'https://dev.ext-api.mysterydrop.app/app/v1'
   - url: 'https://prod.ext-api.mysterydrop.app/app/v1'
@@ -31,6 +37,12 @@ paths:
     $ref: paths/sessions.yaml
   /helloAuth:
     $ref: paths/helloAuth.yaml
+  /initiateUpload:
+    $ref: paths/initiateUpload.yaml
+  /getDrops:
+    $ref: paths/getDrops.yaml
+  /mint:
+    $ref: paths/mint.yaml
 components:
   securitySchemes:
     bearer_auth:

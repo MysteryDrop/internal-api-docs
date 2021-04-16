@@ -1,0 +1,70 @@
+post:
+  tags:
+    - Initiate Upload
+  summary: Upload metadata
+  description: Start the process to upload the content by preparing S3 to receive uploads
+  operationId: initiateUpload
+  security:
+    - bearer_auth: []
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              dropId:
+                type: string
+              user:
+                type: string
+              dropPreviewContentId:
+                type: string
+              dropPreviewUrl:
+                type: string
+              content:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    contentId:
+                      type: string
+                    url:
+                      type: string
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Unauthorized.yaml
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            contentType:
+              type: string
+            dropTitle:
+              type: string
+            dropDescription:
+              type: string
+            numberOfItems:
+              type: integer
+            content:
+              type: array
+              items:
+                type: object
+                properties:
+                  contentId:
+                    type: string
+                  contentType:
+                    type: string
+                  contentTitle:
+                    type: string
+                  contentDescription:
+                    type: string
+    description: Content to upload
+    required: true
+
+

@@ -1,0 +1,92 @@
+get:
+  tags:
+    - Mint
+  summary: Prepare content for minting
+  description: Calculate IPFS hashes and other NFT metadata needed for minting
+  operationId: prepareForMinting
+  parameters:
+  - name: contentId
+    in: path
+    description: ID of the content to mint
+    required: true
+    schema:
+      type: string
+      example: df824575-c199-475d-a440-a0147bbefe4d
+  - name: dropId
+    in: path
+    description: ID of the drop associated with this content
+    required: true
+    schema:
+      type: string
+      example: 480ff17a-51ec-4a17-b0b0-5fe9cba49554
+  security:
+    - bearer_auth: []
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              tokenData:
+                type: object
+                properties:
+                  tokenId:
+                    type: string
+                  tokenUri:
+                    type: string
+                  contractAddress:
+                    type: string
+                  chainId:
+                    type: string
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Unauthorized.yaml
+post:
+  tags:
+    - Mint
+  summary: Submit NFT for lazy minting
+  description: Submit NFT to Rarible API for lazy minting
+  operationId: lazyMint
+  security:
+    - bearer_auth: []
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              TBD:
+                type: string
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Unauthorized.yaml
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            contentId:
+              type: string
+            dropId:
+              type: string
+            signature:
+              type: string
+    description: Token information and signature to submit to Lazy Minting API
+    required: true
+
+
+
+

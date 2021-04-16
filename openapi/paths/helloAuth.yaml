@@ -18,8 +18,4 @@ get:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Unauthorized
+            $ref: ../components/schemas/Unauthorized.yaml
