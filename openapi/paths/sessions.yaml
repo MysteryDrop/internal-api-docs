@@ -4,6 +4,14 @@ get:
   summary: Get challenge
   description: Receive a nonce to sign in order to authenticate
   operationId: nonce
+  parameters:
+  - name: PublicAddress
+    in: path
+    description: Address of user to authenticate
+    required: true
+    schema:
+      type: string
+      example: '0x83BC06079538264Cc18829c5534387c69820A4E6'
   responses:
     '200':
       description: OK

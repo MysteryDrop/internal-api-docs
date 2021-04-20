@@ -1,9 +1,17 @@
 get:
   tags:
     - Get Drops
-  summary: Get all drops for a user
+  summary: Get drops for a user
   description: Get an array of drops including content metadata, or a processing flag if the content is not done processing
   operationId: getDrops
+  parameters:
+  - name: dropId
+    in: path
+    description: Optional parameter to get one specific drop
+    required: false
+    schema:
+      type: string
+      example: 3c379884-d660-45b7-b1d3-73a0b4491835
   security:
     - bearer_auth: []
   responses:
