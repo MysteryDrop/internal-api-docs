@@ -29,6 +29,12 @@ tags:
     description: Get all drops for a user
   - name: Mint
     description: Mint NFTs for drop content
+  - name: Get Public Drops
+    description: Get array of public drops to display in marketplace
+  - name: Publish
+    description: Publish drop to marketplace
+  - name: Reveal
+    description: Reveal content by owner of NFT
 servers:
   - url: 'https://dev.ext-api.mysterydrop.app/app/v1'
   - url: 'https://prod.ext-api.mysterydrop.app/app/v1'
@@ -47,6 +53,8 @@ paths:
     $ref: paths/publish.yaml
   /public/getDrops:
     $ref: paths/getPublicDrops.yaml
+  /reveal:
+    $ref: paths/reveal.yaml
 components:
   securitySchemes:
     bearer_auth:

@@ -42,6 +42,8 @@ get:
                   items:
                     type: object
                     properties:
+                      contentId:
+                        type: string
                       token:
                         type: string
                         example: TODO object

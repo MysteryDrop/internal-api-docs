@@ -1,9 +1,9 @@
 post:
   tags:
-    - Publish
-  summary: Publish a drop
-  description: Publish drop so buyers can find it on the explore tab
-  operationId: publishDrop
+    - Reveal
+  summary: Reveal content by NFT owner
+  description: Pin content to IPFS if this request came from the NFT owner
+  operationId: reveal
   security:
     - bearer_auth: []
   responses:
@@ -28,7 +28,9 @@ post:
         schema:
           type: object
           properties:
+            contentId:
+              type: string
             dropId:
               type: string
-    description: Drop ID for publishing
+    description: Content information to reveal a specific piece of content
     required: true
