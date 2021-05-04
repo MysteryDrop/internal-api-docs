@@ -43,6 +43,10 @@ paths:
     $ref: paths/getDrops.yaml
   /mint:
     $ref: paths/mint.yaml
+  /publish:
+    $ref: paths/publish.yaml
+  /public/getDrops:
+    $ref: paths/getPublicDrops.yaml
 components:
   securitySchemes:
     bearer_auth:

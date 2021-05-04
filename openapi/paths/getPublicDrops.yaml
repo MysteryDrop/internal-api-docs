@@ -1,0 +1,51 @@
+get:
+  tags:
+    - Get Public Drops
+  summary: Get public drops
+  description: Get an array of public drops, or a single drop if the ID is specified. Requires no auth
+  operationId: getDrops
+  parameters:
+  - name: dropId
+    in: path
+    description: Optional parameter to get one specific drop
+    required: false
+    schema:
+      type: string
+      example: 3c379884-d660-45b7-b1d3-73a0b4491835
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: LISTED
+                createdAt:
+                  type: string
+                dropPreviewUrl:
+                  type: string
+                dropTitle:
+                  type: string
+                dropDescription:
+                  type: string
+                numberOfItems:
+                  type: string
+                contentType:
+                  type: string
+                content:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: TODO object
+                      orders:
+                        type: string
+                        example: TODO object
+
